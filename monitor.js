@@ -40,6 +40,15 @@ async function getTargetUniqMd5() {
 
         return md5(pageHtmlStr);
     } catch (error) {
+        // Handle cases where we get an error status code but still have response data
+        if (error.response && error.response.data) {
+            const pageHtmlStr = error.response.data;
+            if (pageHtmlStr) {
+                log(`Got ${error.response.status} status but found page content, processing...`);
+                return md5(pageHtmlStr);
+            }
+        }
+        
         console.error(error);
         return '';
     }
